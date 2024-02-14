@@ -1,0 +1,1840 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Online Board Application",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://microboard.io/api/v1",
+      "description": "Online Board Application REST API"
+    }
+  ],
+  "paths": {
+    "/boards": {
+      "post": {
+        "summary": "Create a board",
+        "operationId": "createBoard",
+        "tags": [
+          "Board"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Board created successfully"
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete a board by ID",
+        "operationId": "deleteBoard",
+        "tags": [
+          "Board"
+        ],
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Board deleted successfully"
+          },
+          "400": {
+            "description": "Invalid board ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Board not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/boards/{boardId}/duplicate": {
+      "post": {
+        "summary": "Duplicate a board",
+        "operationId": "duplicateBoard",
+        "tags": [
+          "Board"
+        ],
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Board duplicated successfully"
+          },
+          "400": {
+            "description": "Invalid board ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Board not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/boards/{boardId}/events": {
+      "post": {
+        "summary": "Add an event to a board",
+        "operationId": "addBoardEvent",
+        "tags": [
+          "Board"
+        ],
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "eventId": {
+                    "type": "string"
+                  },
+                  "eventBody": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "eventId",
+                  "eventBody"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Event added to the board successfully"
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Board not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Retrieve board events",
+        "operationId": "getBoardEvents",
+        "tags": [
+          "Board"
+        ],
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Board events retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "eventType": {
+                            "type": "string"
+                          },
+                          "details": {
+                            "type": "object"
+                          },
+                          "timestamp": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Board not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/boards/{boardId}": {
+      "patch": {
+        "summary": "Rename a board",
+        "operationId": "renameBoard",
+        "tags": [
+          "Board"
+        ],
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newTitle": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "newTitle"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Board renamed successfully"
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Board not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/boards/{boardId}/links": {
+      "post": {
+        "tags": [
+          "Link"
+        ],
+        "summary": "Create link to a board for reading or editing",
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "required": true,
+            "description": "ID of the board",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "read",
+                      "edit"
+                    ],
+                    "description": "Type of the link to be created"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The link is successfully created"
+          },
+          "default": {
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Link"
+        ],
+        "summary": "Remove link to a board",
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Link successfully removed"
+          },
+          "default": {
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/boards/{boardId}/access": {
+      "post": {
+        "tags": [
+          "Access"
+        ],
+        "summary": "Grant access to read or edit a board",
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "description": "User ID"
+                  },
+                  "accessType": {
+                    "type": "string",
+                    "enum": [
+                      "read",
+                      "edit"
+                    ],
+                    "description": "Type of access: read or edit"
+                  }
+                },
+                "required": [
+                  "userId",
+                  "accessType"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Access succesfully granted"
+          },
+          "default": {
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Access"
+        ],
+        "summary": "Revoke access to read or edit a board",
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Access successfully revoked"
+          },
+          "default": {
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/boards/{boardId}/owners": {
+      "post": {
+        "tags": [
+          "Access"
+        ],
+        "summary": "Add board owner",
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "description": "User ID"
+                  }
+                },
+                "required": [
+                  "userId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Owner successfully added"
+          },
+          "default": {
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Access"
+        ],
+        "summary": "Remove board owner",
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Owner successfully removed"
+          },
+          "default": {
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Authenticate user and return JWT",
+        "operationId": "loginUser",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jwt": {
+                      "type": "string",
+                      "description": "JWT token for authenticated user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed"
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get current user details",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "User details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or expired JWT token"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh JWT token",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refreshToken": {
+                    "type": "string",
+                    "description": "Refresh token"
+                  }
+                },
+                "required": [
+                  "refreshToken"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New JWT tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string",
+                      "description": "New access token"
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "description": "New refresh token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or expired refresh token"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "Create a new user",
+        "operationId": "createUser",
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "description": "User creation data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password",
+                  "email"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "avatar": {
+                      "type": "string",
+                      "format": "uri",
+                      "nullable": true
+                    },
+                    "jwt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "409": {
+            "description": "User already exists"
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "delete": {
+        "summary": "Delete a user",
+        "operationId": "deleteUser",
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the user to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or expired JWT token"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update user details",
+        "operationId": "updateUser",
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the user to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "User update data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "format": "uri",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "avatar": {
+                      "type": "string",
+                      "format": "uri",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or expired JWT token"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/groups": {
+      "post": {
+        "tags": [
+          "Group"
+        ],
+        "summary": "Create a new user group",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Group"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/groups/{groupId}": {
+      "delete": {
+        "summary": "Delete a user group",
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "get": {
+        "summary": "List users in the group",
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a group's description",
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "description"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Group"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/groups/{groupId}/users": {
+      "post": {
+        "summary": "Add a user to a group",
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "userId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove a user from a group",
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/catalogs": {
+      "post": {
+        "summary": "Create a new catalog",
+        "operationId": "createCatalog",
+        "tags": [
+          "Catalogs"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Catalog"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Catalog created"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/catalogs/{catalogId}": {
+      "delete": {
+        "summary": "Delete a catalog",
+        "operationId": "deleteCatalog",
+        "tags": [
+          "Catalogs"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/catalogId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Catalog deleted"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "summary": "Rename a catalog",
+        "operationId": "renameCatalog",
+        "tags": [
+          "Catalogs"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/catalogId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newName": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "newName"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Catalog renamed"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/catalogs/{catalogId}/elements": {
+      "get": {
+        "summary": "List elements in a catalog",
+        "operationId": "listCatalogElements",
+        "tags": [
+          "Catalogs"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/catalogId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of catalog elements",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Element"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "summary": "Add an element to a catalog",
+        "operationId": "addElementToCatalog",
+        "tags": [
+          "Catalogs"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/catalogId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Element"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Catalog element added"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/catalogs/{catalogId}/elements/{elementId}": {
+      "delete": {
+        "summary": "Delete an element from a catalog",
+        "operationId": "deleteElementFromCatalog",
+        "tags": [
+          "Catalogs"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/catalogId"
+          },
+          {
+            "$ref": "#/components/parameters/elementId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Catalog element deleted"
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "catalogId": {
+        "name": "catalogId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "elementId": {
+        "name": "elementId",
+        "in": "path",
+        "required": true,
+        "description": "Unique identifier of the element in the format of a UUID",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "username"
+        ]
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Catalog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Element": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "catalog",
+              "board"
+            ]
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "name"
+        ]
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "example": 10
+          },
+          "totalPages": {
+            "type": "integer",
+            "example": 5
+          },
+          "totalItems": {
+            "type": "integer",
+            "example": 50
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "JWTClaims": {
+        "type": "object",
+        "properties": {
+          "sub": {
+            "type": "string",
+            "description": "Subject - the principal that is the subject of the JWT."
+          },
+          "exp": {
+            "type": "integer",
+            "description": "Expiration time - the time after which the JWT expires."
+          },
+          "nbf": {
+            "type": "integer",
+            "description": "Not before time - the time before which the JWT must not be accepted for processing."
+          },
+          "iat": {
+            "type": "integer",
+            "description": "Issued at time - the time at which the JWT was issued."
+          },
+          "jti": {
+            "type": "string",
+            "description": "JWT ID - a unique identifier for the JWT."
+          },
+          "aud": {
+            "type": "string",
+            "description": "Audience - the recipients that the JWT is intended for."
+          },
+          "iss": {
+            "type": "string",
+            "description": "Issuer - the principal that issued the JWT."
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token for obtaining new access tokens"
+          },
+          "permissions": {
+            "type": "object",
+            "description": "Custom claims for specific permissions within the online board application.",
+            "properties": {
+              "boards": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "boardId": {
+                      "type": "string",
+                      "description": "The unique identifier for a specific board."
+                    },
+                    "permissions": {
+                      "type": "object",
+                      "properties": {
+                        "read": {
+                          "type": "boolean",
+                          "description": "Allow reading the specific board."
+                        },
+                        "edit": {
+                          "type": "boolean",
+                          "description": "Allow editing the specific board."
+                        },
+                        "canEditBoardTitle": {
+                          "type": "boolean",
+                          "description": "Allow editing the title of this specific board."
+                        },
+                        "canDeleteBoard": {
+                          "type": "boolean",
+                          "description": "Allow deleting this specific board."
+                        },
+                        "canDuplicateBoard": {
+                          "type": "boolean",
+                          "description": "Allow duplicating this specific board."
+                        },
+                        "canAddBoardEvent": {
+                          "type": "boolean",
+                          "description": "Allow adding an event to this specific board."
+                        },
+                        "canRetrieveBoardEvents": {
+                          "type": "boolean",
+                          "description": "Allow retrieving events from this specific board."
+                        },
+                        "canCreateBoardLink": {
+                          "type": "boolean",
+                          "description": "Allow creating a link for this specific board."
+                        },
+                        "canDeleteBoardLink": {
+                          "type": "boolean",
+                          "description": "Allow deleting a link for this specific board."
+                        },
+                        "canGrantBoardAccess": {
+                          "type": "boolean",
+                          "description": "Allow granting access to this specific board."
+                        },
+                        "canRevokeBoardAccess": {
+                          "type": "boolean",
+                          "description": "Allow revoking access to this specific board."
+                        },
+                        "canAddBoardOwner": {
+                          "type": "boolean",
+                          "description": "Allow adding an owner to this specific board."
+                        },
+                        "canRemoveBoardOwner": {
+                          "type": "boolean",
+                          "description": "Allow removing an owner from this specific board."
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "boardId"
+                  ]
+                },
+                "description": "List of specific boards and permissions for them."
+              },
+              "catalogs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "catalogId": {
+                      "type": "string",
+                      "description": "The unique identifier for a specific catalog."
+                    },
+                    "permissions": {
+                      "type": "object",
+                      "properties": {
+                        "read": {
+                          "type": "boolean",
+                          "description": "Allow reading all boards or catalogs within the specific catalog."
+                        },
+                        "edit": {
+                          "type": "boolean",
+                          "description": "Allow editing all boards or catalogs within the specific catalog."
+                        },
+                        "canCreateCatalogElement": {
+                          "type": "boolean",
+                          "description": "Allow creating an element in this specific catalog."
+                        },
+                        "canDeleteCatalogElement": {
+                          "type": "boolean",
+                          "description": "Allow deleting an element from this specific catalog."
+                        },
+                        "canListCatalogElements": {
+                          "type": "boolean",
+                          "description": "Allow listing elements within this specific catalog."
+                        },
+                        "canRenameCatalog": {
+                          "type": "boolean",
+                          "description": "Allow renaming this specific catalog."
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "catalogId"
+                  ]
+                },
+                "description": "List of specific catalogs and permissions for the boards and catalogs within them."
+              },
+              "operations": {
+                "type": "object",
+                "properties": {
+                  "canCreateBoard": {
+                    "type": "boolean",
+                    "description": "Allow creating new boards"
+                  },
+                  "canCreateUser": {
+                    "type": "boolean",
+                    "description": "Allow creating new users"
+                  },
+                  "canDeleteUser": {
+                    "type": "boolean",
+                    "description": "Allow deleting users"
+                  },
+                  "canUpdateUser": {
+                    "type": "boolean",
+                    "description": "Allow updating user details"
+                  },
+                  "canCreateUserGroup": {
+                    "type": "boolean",
+                    "description": "Allow creating a new user group"
+                  },
+                  "canDeleteUserGroup": {
+                    "type": "boolean",
+                    "description": "Allow deleting a user group"
+                  },
+                  "canUpdateUserGroup": {
+                    "type": "boolean",
+                    "description": "Allow updating a user group's details"
+                  },
+                  "canCreateCatalog": {
+                    "type": "boolean",
+                    "description": "Allow creating a new catalog"
+                  },
+                  "canDeleteCatalog": {
+                    "type": "boolean",
+                    "description": "Allow deleting a catalog"
+                  },
+                  "canRenameCatalog": {
+                    "type": "boolean",
+                    "description": "Allow renaming a catalog"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "sub",
+          "exp",
+          "iat",
+          "jti",
+          "iss"
+        ]
+      }
+    }
+  }
+}
