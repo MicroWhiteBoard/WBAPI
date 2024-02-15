@@ -487,7 +487,30 @@
         },
         "responses": {
           "201": {
-            "description": "The link is successfully created"
+            "description": "The link is successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "linkId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Unique identifier of the created link"
+                    },
+                    "linkUri": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "URI of the created link"
+                    }
+                  },
+                  "required": [
+                    "linkId",
+                    "linkUri"
+                  ]
+                }
+              }
+            }
           },
           "default": {
             "description": "Error"

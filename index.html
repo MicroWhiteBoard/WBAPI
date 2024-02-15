@@ -27,7 +27,6 @@
 <body>
   <div id="swagger-ui"></div>
   <script src="node_modules/swagger-ui-dist/swagger-ui-bundle.js"> </script>
-  <script src="node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js"> </script>
   <script>
     window.onload = function() {
       // Begin Swagger UI call region
@@ -37,12 +36,10 @@
         deepLinking: true,
         presets: [
           SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset
         ],
         plugins: [
           SwaggerUIBundle.plugins.DownloadUrl
         ],
-        layout: "StandaloneLayout"
       });
       // End Swagger UI call region
 
