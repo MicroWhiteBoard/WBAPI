@@ -21,9 +21,18 @@ paths:
               properties:
                 title:
                   type: string
+                  nullable: true
       responses:
         '201':
           description: Board created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  boardId:
+                    type: string
+                    format: uuid
         '400':
           description: Invalid input
           content:
@@ -78,6 +87,17 @@ paths:
       operationId: duplicateBoard
       tags:
         - Board
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                catalogId:
+                  type: string
+                title:
+                  type: string
+                  nullable: true
       parameters:
         - name: boardId
           in: path
@@ -615,7 +635,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JWTClaims'
+                $ref: '#/components/schemas/AuthTokens'
         '401':
           description: Authentication failed
   /auth/me:
@@ -1181,168 +1201,145 @@ components:
           type: integer
         message:
           type: string
-    JWTClaims:
+    AccessToken:
       type: object
       properties:
         sub:
           type: string
-          description: Subject - the principal that is the subject of the JWT.
+          description: Subject - usually a user identifier.
         exp:
           type: integer
-          description: Expiration time - the time after which the JWT expires.
-        nbf:
-          type: integer
-          description: >-
-            Not before time - the time before which the JWT must not be accepted
-            for processing.
+          format: int64
+          description: Expiration time - the Unix time after which this token is considered invalid.
         iat:
           type: integer
-          description: Issued at time - the time at which the JWT was issued.
+          format: int64
+          description: Issued at time - the Unix time when this token was issued.
         jti:
           type: string
-          description: JWT ID - a unique identifier for the JWT.
-        aud:
-          type: string
-          description: Audience - the recipients that the JWT is intended for.
+          description: JWT ID - a unique identifier for this token.
         iss:
           type: string
-          description: Issuer - the principal that issued the JWT.
-        refreshToken:
+          description: Issuer - the service or entity that issued this token.
+        aud:
           type: string
-          description: Refresh token for obtaining new access tokens
-        permissions:
+          description: Audience - the recipients that this token is intended for.
+        nbf:
+          type: integer
+          format: int64
+          description: Not before time - the Unix time before which this token should not be accepted.
+          nullable: true
+        owns:
           type: object
-          description: >-
-            Custom claims for specific permissions within the online board
-            application.
+          nullable: true
           properties:
             boards:
               type: array
               items:
-                type: object
-                properties:
-                  boardId:
-                    type: string
-                    description: The unique identifier for a specific board.
-                  permissions:
-                    type: object
-                    properties:
-                      read:
-                        type: boolean
-                        description: Allow reading the specific board.
-                      edit:
-                        type: boolean
-                        description: Allow editing the specific board.
-                      canEditBoardTitle:
-                        type: boolean
-                        description: Allow editing the title of this specific board.
-                      canDeleteBoard:
-                        type: boolean
-                        description: Allow deleting this specific board.
-                      canDuplicateBoard:
-                        type: boolean
-                        description: Allow duplicating this specific board.
-                      canAddBoardEvent:
-                        type: boolean
-                        description: Allow adding an event to this specific board.
-                      canRetrieveBoardEvents:
-                        type: boolean
-                        description: Allow retrieving events from this specific board.
-                      canCreateBoardLink:
-                        type: boolean
-                        description: Allow creating a link for this specific board.
-                      canDeleteBoardLink:
-                        type: boolean
-                        description: Allow deleting a link for this specific board.
-                      canGrantBoardAccess:
-                        type: boolean
-                        description: Allow granting access to this specific board.
-                      canRevokeBoardAccess:
-                        type: boolean
-                        description: Allow revoking access to this specific board.
-                      canAddBoardOwner:
-                        type: boolean
-                        description: Allow adding an owner to this specific board.
-                      canRemoveBoardOwner:
-                        type: boolean
-                        description: Allow removing an owner from this specific board.
-                required:
-                  - boardId
-              description: List of specific boards and permissions for them.
+                type: string
+                format: uuid
             catalogs:
               type: array
               items:
-                type: object
-                properties:
-                  catalogId:
-                    type: string
-                    description: The unique identifier for a specific catalog.
-                  permissions:
-                    type: object
-                    properties:
-                      read:
-                        type: boolean
-                        description: >-
-                          Allow reading all boards or catalogs within the
-                          specific catalog.
-                      edit:
-                        type: boolean
-                        description: >-
-                          Allow editing all boards or catalogs within the
-                          specific catalog.
-                      canCreateCatalogElement:
-                        type: boolean
-                        description: Allow creating an element in this specific catalog.
-                      canDeleteCatalogElement:
-                        type: boolean
-                        description: Allow deleting an element from this specific catalog.
-                      canListCatalogElements:
-                        type: boolean
-                        description: Allow listing elements within this specific catalog.
-                      canRenameCatalog:
-                        type: boolean
-                        description: Allow renaming this specific catalog.
-                required:
-                  - catalogId
-              description: >-
-                List of specific catalogs and permissions for the boards and
-                catalogs within them.
-            operations:
-              type: object
-              properties:
-                canCreateBoard:
-                  type: boolean
-                  description: Allow creating new boards
-                canCreateUser:
-                  type: boolean
-                  description: Allow creating new users
-                canDeleteUser:
-                  type: boolean
-                  description: Allow deleting users
-                canUpdateUser:
-                  type: boolean
-                  description: Allow updating user details
-                canCreateUserGroup:
-                  type: boolean
-                  description: Allow creating a new user group
-                canDeleteUserGroup:
-                  type: boolean
-                  description: Allow deleting a user group
-                canUpdateUserGroup:
-                  type: boolean
-                  description: Allow updating a user group's details
-                canCreateCatalog:
-                  type: boolean
-                  description: Allow creating a new catalog
-                canDeleteCatalog:
-                  type: boolean
-                  description: Allow deleting a catalog
-                canRenameCatalog:
-                  type: boolean
-                  description: Allow renaming a catalog
+                type: string
+                format: uuid
+            groups:
+              type: array
+              items:
+                type: string
+                format: uuid
+        edits:
+          type: object
+          nullable: true
+          properties:
+            boards:
+              type: array
+              items:
+                type: string
+                format: uuid
+            catalogs:
+              type: array
+              items:
+                type: string
+                format: uuid
+            groups:
+              type: array
+              items:
+                type: string
+                format: uuid
+        reads:
+          type: object
+          nullable: true
+          properties:
+            boards:
+              type: array
+              items:
+                type: string
+                format: uuid
+            catalogs:
+              type: array
+              items:
+                type: string
+                format: uuid
+            groups:
+              type: array
+              items:
+                type: string
+                format: uuid
+        displayName:
+          type: string
+          nullable: true
+          description: The display name of the user.
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+          description: The URL to the user's avatar image.
       required:
         - sub
         - exp
         - iat
         - jti
         - iss
+        - aud
+    RefreshToken:
+      type: object
+      required:
+        - sub
+        - exp
+        - iat
+        - jti
+        - iss
+        - aud
+      properties:
+        sub:
+          type: string
+          description: Subject - the user ID associated with this token.
+        exp:
+          type: integer
+          description: Expiration time - the time after which the token expires.
+        iat:
+          type: integer
+          description: Issued at time - the time at which the token was issued.
+        jti:
+          type: string
+          description: JWT ID - a unique identifier for the token.
+        iss:
+          type: string
+          description: Issuer - the service that issued the token.
+        aud:
+          type: string
+          description: Audience - the intended recipients of the token.
+        nbf:
+          type: integer
+          description: Not before time - the token should not be accepted before this time.
+    AuthTokens:
+      type: object
+      properties:
+        accessToken:
+          $ref: '#/components/schemas/AccessToken'
+        refreshToken:
+          $ref: '#/components/schemas/RefreshToken'
+      required:
+        - accessToken
+        - refreshToken

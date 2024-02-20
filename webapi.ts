@@ -6,22 +6,22 @@ interface AccessToken {
     jti: string; // JWT ID
     aud: string; // Audience
     iss: string; // Issuer
-    boards?: {
-        owns?: {
-            boards?: Array<string>;
-            catalogs?: Array<string>;
-            groups?: Array<string>;
-        };
-        edits?: {
-            boards?: Array<string>;
-            catalogs?: Array<string>;
-            groups?: Array<string>;
-        }
-        reads?: {
-            boards?: Array<string>;
-            catalogs?: Array<string>;
-            groups?: Array<string>;
-        }
+    displayName?: string;
+    avatar?: string;
+    owns?: {
+        boards?: Array<string>;
+        catalogs?: Array<string>;
+        groups?: Array<string>;
+    };
+    edits?: {
+        boards?: Array<string>;
+        catalogs?: Array<string>;
+        groups?: Array<string>;
+    }
+    reads?: {
+        boards?: Array<string>;
+        catalogs?: Array<string>;
+        groups?: Array<string>;
     }
 }
 
@@ -36,6 +36,8 @@ interface RefreshToken {
 }
 
 interface BoardCreationReq {
+    catalogId: string;
+    creatorId: string;
     title?: string;
 }
 
@@ -44,6 +46,8 @@ interface BoardCreationRes {
 }
 
 interface BoardDuplicateReq {
+    catalogId: string;
+    creatorId: string;
     boardId: string;
     title?: string;
 }
@@ -71,6 +75,10 @@ interface BoardGetEventsReq {
     limit?: number;
 }
 
+interface BoardGetEventsRes {
+
+}
+
 interface BoardRenameReq {
     boardId: string;
     newTitle: string;
@@ -93,7 +101,7 @@ interface BoardAPI {
     delete(req: BoardDeleteReq): Promise<void | ErrorRes>;
     duplicate(req: BoardDuplicateReq): Promise<BoardCreationRes | ErrorRes>;
     addEvent(req: BoardAddEventReq): Promise<void | ErrorRes>;
-    getEvents(req: BoardGetEventsReq): Promise<BoardEventsRes | ErrorRes>;
+    getEvents(req: BoardGetEventsReq): Promise<BoardGetEventsRes | ErrorRes>;
     rename(req: BoardRenameReq): Promise<void | ErrorRes>;
     updateSnapshot(req: BoardUpdateSnapshotReq): Promise<void | ErrorRes>;
     getSnapshot(req: BoardGetSnapshotReq): Promise<BoardSnaphotRes | ErrorRes>;
@@ -104,12 +112,19 @@ interface LinkCreationReq {
     type: 'read' | 'edit';
 }
 
+interface LinkCreationRes {
+    boardId: string;
+    linkId: string;
+    linkUrl: string;
+    type: 'read' | 'edit';
+}
+
 interface LinkRemoveReq {
     boardId: string;
 }
 
 interface LinkAPI {
-    create(req: LinkCreationReq): Promise<BoardLinkCreationRes | ErrorRes>;
+    create(req: LinkCreationReq): Promise<LinkCreationRes | ErrorRes>;
     remove(req: LinkRemoveReq): Promise<void | ErrorRes>;
 }
 
@@ -238,7 +253,7 @@ interface AuthAPI {
     registerUser(req: AuthSignUpUserReq): Promise<AuthLoginRes | ErrorRes>;
     resendPasscode(req: AuthResendPasscodeReq): Promise<void | ErrorRes>;
     login(req: AuthLoginReq): Promise<AuthLoginRes | ErrorRes>;
-    getCurrentUser(): Promise<CurrentUserRes | ErrorRes>;
+    getCurrentUser(): Promise<UserDetails | ErrorRes>;
     refreshToken(req: AuthRefreshTokenReq): Promise<AuthLoginRes | ErrorRes>;
 }
 
@@ -250,6 +265,7 @@ interface UserCreateReq {
 
 interface UserDetails {
     userId: string;
+    userHomeCatalogId: string;
     userDisplayName?: string;
     userAvatar?: string;
 }
