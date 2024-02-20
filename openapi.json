@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "https://microboard.io/api/v1",
+      "url": "https://alpha.microboard.io/api/v1",
       "description": "Online Board Application REST API"
     }
   ],
@@ -717,10 +717,10 @@
         ]
       }
     },
-    "/auth/login": {
+    "/auth/register": {
       "post": {
-        "summary": "Authenticate user and return JWT",
-        "operationId": "loginUser",
+        "summary": "Register a new user with various credentials",
+        "operationId": "registerUser",
         "tags": [
           "Auth"
         ],
@@ -731,17 +731,160 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "username": {
-                    "type": "string"
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "nullable": true
                   },
                   "password": {
                     "type": "string",
-                    "format": "password"
+                    "format": "password",
+                    "nullable": true
+                  },
+                  "username": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "phone": {
+                    "type": "string",
+                    "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
+                    "nullable": true
                   }
                 },
-                "required": [
-                  "username",
-                  "password"
+                "oneOf": [
+                  {
+                    "required": [
+                      "email",
+                      "password"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "username",
+                      "password"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "email"
+                    ],
+                    "description": "Register with email only, passcode will be sent"
+                  },
+                  {
+                    "required": [
+                      "phone"
+                    ],
+                    "description": "Register with phone number only, passcode will be sent"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registration successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "A message indicating the success of the operation."
+                    },
+                    "userType": {
+                      "type": "string",
+                      "enum": [
+                        "passwordUser",
+                        "passcodeUser"
+                      ],
+                      "description": "Indicates whether the user was registered with a password (passwordUser) or if a passcode was sent (passcodeUser)."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field": {
+                            "type": "string",
+                            "description": "The field in the request that contains the error."
+                          },
+                          "message": {
+                            "type": "string",
+                            "description": "A detailed message explaining why the input is invalid."
+                          },
+                          "errorCode": {
+                            "type": "string",
+                            "description": "An application-specific error code representing the type of validation error."
+                          }
+                        },
+                        "required": [
+                          "field",
+                          "message",
+                          "errorCode"
+                        ]
+                      },
+                      "description": "A list of errors describing what is invalid in the input data."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with provided credential already exists"
+          }
+        }
+      }
+    },
+    "/auth/resend-passcode": {
+      "post": {
+        "summary": "Resend passcode",
+        "operationId": "resendUserPasscode",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "pattern": "^[+][0-9]{10,15}$",
+                    "description": "Phone number in international format"
+                  }
+                },
+                "oneOf": [
+                  {
+                    "required": [
+                      "email"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "phoneNumber"
+                    ]
+                  }
                 ]
               }
             }
@@ -749,17 +892,98 @@
         },
         "responses": {
           "200": {
-            "description": "Authentication successful",
+            "description": "Passcode resent successfully"
+          },
+          "400": {
+            "description": "Invalid email format"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Authenticate user with email, phone, or username and password or passcode",
+        "operationId": "loginUserMultiMethod",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "nullable": true
+                  },
+                  "phone": {
+                    "type": "string",
+                    "pattern": "^\\+[1-9]\\d{1,14}$",
+                    "nullable": true
+                  },
+                  "username": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "nullable": true
+                  },
+                  "passcode": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "oneOf": [
+                  {
+                    "required": [
+                      "email",
+                      "password"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "phone",
+                      "password"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "username",
+                      "password"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "email",
+                      "passcode"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "phone",
+                      "passcode"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User authenticated successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "jwt": {
-                      "type": "string",
-                      "description": "JWT token for authenticated user"
-                    }
-                  }
+                  "$ref": "#/components/schemas/JWTClaims"
                 }
               }
             }
@@ -954,8 +1178,8 @@
         }
       },
       "patch": {
-        "summary": "Update user details",
-        "operationId": "updateUser",
+        "summary": "Update user details, including setting a new password",
+        "operationId": "updateUserDetails",
         "tags": [
           "User"
         ],
@@ -964,14 +1188,14 @@
             "name": "userId",
             "in": "path",
             "required": true,
-            "description": "The ID of the user to update",
+            "description": "The ID of the user to set/update the password for",
             "schema": {
               "type": "string"
             }
           }
         ],
         "requestBody": {
-          "description": "User update data",
+          "description": "User update data, including new password",
           "required": true,
           "content": {
             "application/json": {
@@ -985,6 +1209,16 @@
                   "avatar": {
                     "type": "string",
                     "format": "uri",
+                    "nullable": true
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "format": "password",
+                    "nullable": true
+                  },
+                  "confirmPassword": {
+                    "type": "string",
+                    "format": "password",
                     "nullable": true
                   }
                 }
@@ -1017,7 +1251,7 @@
             }
           },
           "400": {
-            "description": "Invalid input data"
+            "description": "Invalid input data or passwords do not match"
           },
           "401": {
             "description": "Unauthorized - Invalid or expired JWT token"
@@ -1025,7 +1259,12 @@
           "404": {
             "description": "User not found"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/groups": {
