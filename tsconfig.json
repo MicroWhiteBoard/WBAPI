@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+	  "target": "es2015",
+	  "module": "ESNext",
+	  "strict": true,
+	  "esModuleInterop": true,
+	  "forceConsistentCasingInFileNames": true,
+	  "moduleResolution": "node",
+	  "outDir": "./dist",
+	  "declaration": true,
+	  "sourceMap": true
+	},
+	"include": [
+	  "src/**/*"
+	],
+	"exclude": [
+	  "node_modules",
+	  "dist"
+	]
+}
+  

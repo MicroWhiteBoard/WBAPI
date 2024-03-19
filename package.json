@@ -4,12 +4,16 @@
   "description": "White Board API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run build:esm && npm run build:cjs && tsc --emitDeclarationOnly",
+    "build:esm": "esbuild src/index.ts --bundle --minify --sourcemap --outdir=dist/esm --platform=browser --target=es2015 --format=esm",
+    "build:cjs": "esbuild src/index.ts --bundle --minify --sourcemap --outdir=dist/cjs --platform=browser --target=es2015 --format=cjs"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "http-server": "^14.1.1",
-    "swagger-ui-dist": "^5.11.3"
+    "http-server": "14.1.1",
+    "swagger-ui-dist": "5.11.3",
+    "esbuild": "0.20.2",
+    "typescript": "5.4.2"
   }
 }
