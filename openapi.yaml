@@ -13,7 +13,7 @@ paths:
       tags:
         - Board
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
@@ -22,8 +22,12 @@ paths:
                 title:
                   type: string
                   nullable: true
+                catalogId:
+                  type: string
+                  format: uuid
+                  nullable: true
       responses:
-        '201':
+        "201":
           description: Board created successfully
           content:
             application/json:
@@ -33,18 +37,18 @@ paths:
                   boardId:
                     type: string
                     format: uuid
-        '400':
+        "400":
           description: Invalid input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
       security:
         - BearerAuth: []
     delete:
@@ -58,27 +62,38 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                catalogId:
+                  type: string
+                  format: uuid
+                  nullable: true
       responses:
-        '204':
+        "204":
           description: Board deleted successfully
-        '400':
+        "400":
           description: Invalid board ID
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: Board not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
       security:
         - BearerAuth: []
   /boards/{boardId}/duplicate:
@@ -88,6 +103,7 @@ paths:
       tags:
         - Board
       requestBody:
+        required: false
         content:
           application/json:
             schema:
@@ -95,6 +111,8 @@ paths:
               properties:
                 catalogId:
                   type: string
+                  format: uuid
+                  nullable: true
                 title:
                   type: string
                   nullable: true
@@ -105,26 +123,26 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Board duplicated successfully
-        '400':
+        "400":
           description: Invalid board ID
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: Board not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
       security:
         - BearerAuth: []
   /boards/{boardId}/events:
@@ -154,26 +172,26 @@ paths:
                 - eventId
                 - eventBody
       responses:
-        '201':
+        "201":
           description: Event added to the board successfully
-        '400':
+        "400":
           description: Invalid input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: Board not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
       security:
         - BearerAuth: []
     get:
@@ -193,6 +211,7 @@ paths:
             type: integer
             minimum: 1
             default: 1
+            required: false
         - name: limit
           in: query
           schema:
@@ -200,8 +219,9 @@ paths:
             minimum: 1
             maximum: 100
             default: 10
+            required: false
       responses:
-        '200':
+        "200":
           description: Board events retrieved
           content:
             application/json:
@@ -221,25 +241,25 @@ paths:
                           type: string
                           format: date-time
                   pagination:
-                    $ref: '#/components/schemas/Pagination'
-        '400':
+                    $ref: "#/components/schemas/Pagination"
+        "400":
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: Board not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
       security:
         - BearerAuth: []
   /boards/{boardId}:
@@ -266,26 +286,26 @@ paths:
               required:
                 - newTitle
       responses:
-        '200':
+        "200":
           description: Board renamed successfully
-        '400':
+        "400":
           description: Invalid input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: Board not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
       security:
         - BearerAuth: []
   /boards/{boardId}/links:
@@ -316,7 +336,7 @@ paths:
               required:
                 - type
       responses:
-        '201':
+        "201":
           description: The link is successfully created
           content:
             application/json:
@@ -348,8 +368,14 @@ paths:
           required: true
           schema:
             type: string
+        - name: linkId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
       responses:
-        '204':
+        "204":
           description: Link successfully removed
         default:
           description: Error
@@ -380,12 +406,12 @@ paths:
                   enum:
                     - read
                     - edit
-                  description: 'Type of access: read or edit'
+                  description: "Type of access: read or edit"
               required:
                 - userId
                 - accessType
       responses:
-        '201':
+        "201":
           description: Access succesfully granted
         default:
           description: Error
@@ -402,7 +428,7 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: Access successfully revoked
         default:
           description: Error
@@ -431,7 +457,7 @@ paths:
               required:
                 - userId
       responses:
-        '201':
+        "201":
           description: Owner successfully added
         default:
           description: Error
@@ -448,7 +474,7 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: Owner successfully removed
         default:
           description: Error
@@ -496,7 +522,7 @@ paths:
                     - phone
                   description: Register with phone number only, passcode will be sent
       responses:
-        '201':
+        "201":
           description: User registration successful
           content:
             application/json:
@@ -514,7 +540,7 @@ paths:
                     description: >-
                       Indicates whether the user was registered with a password
                       (passwordUser) or if a passcode was sent (passcodeUser).
-        '400':
+        "400":
           description: Invalid input data
           content:
             application/json:
@@ -546,7 +572,7 @@ paths:
                     description: >-
                       A list of errors describing what is invalid in the input
                       data.
-        '409':
+        "409":
           description: User with provided credential already exists
   /auth/resend-passcode:
     post:
@@ -574,11 +600,11 @@ paths:
                 - required:
                     - phoneNumber
       responses:
-        '200':
+        "200":
           description: Passcode resent successfully
-        '400':
+        "400":
           description: Invalid email format
-        '404':
+        "404":
           description: User not found
   /auth/login:
     post:
@@ -630,13 +656,13 @@ paths:
                     - phone
                     - passcode
       responses:
-        '200':
+        "200":
           description: User authenticated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthTokens'
-        '401':
+                $ref: "#/components/schemas/AuthTokens"
+        "401":
           description: Authentication failed
   /auth/me:
     get:
@@ -644,13 +670,13 @@ paths:
       tags:
         - Auth
       responses:
-        '200':
+        "200":
           description: User details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '401':
+                $ref: "#/components/schemas/User"
+        "401":
           description: Unauthorized - Invalid or expired JWT token
       security:
         - BearerAuth: []
@@ -673,7 +699,7 @@ paths:
               required:
                 - refreshToken
       responses:
-        '200':
+        "200":
           description: New JWT tokens
           content:
             application/json:
@@ -686,7 +712,7 @@ paths:
                   refreshToken:
                     type: string
                     description: New refresh token
-        '401':
+        "401":
           description: Invalid or expired refresh token
   /users:
     post:
@@ -715,7 +741,7 @@ paths:
                 - password
                 - email
       responses:
-        '201':
+        "201":
           description: User created successfully
           content:
             application/json:
@@ -732,9 +758,9 @@ paths:
                     nullable: true
                   jwt:
                     type: string
-        '400':
+        "400":
           description: Invalid input data
-        '409':
+        "409":
           description: User already exists
   /users/{userId}:
     delete:
@@ -750,11 +776,11 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: User deleted successfully
-        '401':
+        "401":
           description: Unauthorized - Invalid or expired JWT token
-        '404':
+        "404":
           description: User not found
     patch:
       summary: Update user details, including setting a new password
@@ -792,7 +818,7 @@ paths:
                   format: password
                   nullable: true
       responses:
-        '200':
+        "200":
           description: User updated successfully
           content:
             application/json:
@@ -807,11 +833,11 @@ paths:
                     type: string
                     format: uri
                     nullable: true
-        '400':
+        "400":
           description: Invalid input data or passwords do not match
-        '401':
+        "401":
           description: Unauthorized - Invalid or expired JWT token
-        '404':
+        "404":
           description: User not found
       security:
         - BearerAuth: []
@@ -834,14 +860,14 @@ paths:
               required:
                 - name
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Group'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+                $ref: "#/components/schemas/Group"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
   /groups/{groupId}:
     delete:
       summary: Delete a user group
@@ -855,10 +881,10 @@ paths:
             type: string
             format: uuid
       responses:
-        '204':
+        "204":
           description: No Content
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
     get:
       summary: List users in the group
       tags:
@@ -871,16 +897,16 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+                  $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
     patch:
       summary: Update a group's description
       tags:
@@ -904,14 +930,14 @@ paths:
               required:
                 - description
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Group'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+                $ref: "#/components/schemas/Group"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
   /groups/{groupId}/users:
     post:
       summary: Add a user to a group
@@ -937,10 +963,10 @@ paths:
               required:
                 - userId
       responses:
-        '204':
+        "204":
           description: No Content
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
     delete:
       summary: Remove a user from a group
       tags:
@@ -959,10 +985,10 @@ paths:
             type: string
             format: uuid
       responses:
-        '204':
+        "204":
           description: No Content
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
   /catalogs:
     post:
       summary: Create a new catalog
@@ -974,14 +1000,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Catalog'
+              $ref: "#/components/schemas/Catalog"
       responses:
-        '201':
+        "201":
           description: Catalog created
-        '400':
+        "400":
           description: Invalid input
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
       security:
         - BearerAuth: []
   /catalogs/{catalogId}:
@@ -991,12 +1017,12 @@ paths:
       tags:
         - Catalog
       parameters:
-        - $ref: '#/components/parameters/catalogId'
+        - $ref: "#/components/parameters/catalogId"
       responses:
-        '204':
+        "204":
           description: Catalog deleted
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
       security:
         - BearerAuth: []
     patch:
@@ -1005,7 +1031,7 @@ paths:
       tags:
         - Catalog
       parameters:
-        - $ref: '#/components/parameters/catalogId'
+        - $ref: "#/components/parameters/catalogId"
       requestBody:
         required: true
         content:
@@ -1018,12 +1044,12 @@ paths:
               required:
                 - newName
       responses:
-        '200':
+        "200":
           description: Catalog renamed
-        '400':
+        "400":
           description: Invalid input
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
       security:
         - BearerAuth: []
   /catalogs/{catalogId}/elements:
@@ -1033,18 +1059,18 @@ paths:
       tags:
         - Catalog
       parameters:
-        - $ref: '#/components/parameters/catalogId'
+        - $ref: "#/components/parameters/catalogId"
       responses:
-        '200':
+        "200":
           description: List of catalog elements
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Element'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+                  $ref: "#/components/schemas/Element"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
       security:
         - BearerAuth: []
     post:
@@ -1053,20 +1079,20 @@ paths:
       tags:
         - Catalog
       parameters:
-        - $ref: '#/components/parameters/catalogId'
+        - $ref: "#/components/parameters/catalogId"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Element'
+              $ref: "#/components/schemas/Element"
       responses:
-        '201':
+        "201":
           description: Catalog element added
-        '400':
+        "400":
           description: Invalid input
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
       security:
         - BearerAuth: []
   /catalogs/{catalogId}/elements/{elementId}:
@@ -1076,19 +1102,19 @@ paths:
       tags:
         - Catalog
       parameters:
-        - $ref: '#/components/parameters/catalogId'
-        - $ref: '#/components/parameters/elementId'
+        - $ref: "#/components/parameters/catalogId"
+        - $ref: "#/components/parameters/elementId"
       responses:
-        '204':
+        "204":
           description: Catalog element deleted
-        '400':
+        "400":
           description: Invalid input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
       security:
         - BearerAuth: []
 components:
@@ -1337,9 +1363,9 @@ components:
       type: object
       properties:
         accessToken:
-          $ref: '#/components/schemas/AccessToken'
+          $ref: "#/components/schemas/AccessToken"
         refreshToken:
-          $ref: '#/components/schemas/RefreshToken'
+          $ref: "#/components/schemas/RefreshToken"
       required:
         - accessToken
         - refreshToken

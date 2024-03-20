@@ -10,38 +10,39 @@
         font-family: Arial, sans-serif;
       }
       #whiteboard-container {
-        width: 800px;
-        height: 600px;
+        width: 100%;
+        height: 100vh;
         border: 1px solid #ccc;
-        margin: 20px auto;
       }
     </style>
   </head>
   <body>
     <div id="whiteboard-container"></div>
     <script type="module">
-      import { Whiteboard } from "./dist/index.js";
+      import { WhiteboardLoader } from "./dist/index.js";
+
+      const whiteboardContainer = document.getElementById(
+        "whiteboard-container"
+      );
 
       const whiteboardParams = {
-        container: document.getElementById("whiteboard-container"),
+        container: whiteboardContainer,
         baseUrl: "https://whiteboard.example.com",
         boardId: "123abc",
         userToken: "secretUserToken",
-        width: "100%",
-        height: "100%",
       };
 
-      const whiteboard = new Whiteboard();
+      const whiteboardLoader = new WhiteboardLoader();
 
-      whiteboard.render(whiteboardParams).then(() => {});
+      whiteboardLoader.render(whiteboardParams).then((whiteboard) => {
+        setTimeout(() => {
+          whiteboard.updateUserToken("newAccessToken");
+        }, 5000);
 
-      setTimeout(() => {
-        whiteboard.setAuthToken("newAccessToken");
-      }, 5000);
-
-      window.onunload = () => {
-        whiteboard.dispose();
-      };
+        window.onunload = () => {
+          whiteboard.dispose();
+        };
+      });
     </script>
   </body>
 </html>
