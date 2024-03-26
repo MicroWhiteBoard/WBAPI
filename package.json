@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "microboard",
   "version": "1.0.0",
   "description": "White Board API",
   "main": "dist/cjs/index.js",
