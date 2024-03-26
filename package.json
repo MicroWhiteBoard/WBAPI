@@ -2,7 +2,9 @@
   "name": "api",
   "version": "1.0.0",
   "description": "White Board API",
-  "main": "index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs && tsc --emitDeclarationOnly",
     "build:esm": "esbuild src/index.ts --bundle --minify --sourcemap --outdir=dist/esm --platform=browser --target=es2015 --format=esm",
