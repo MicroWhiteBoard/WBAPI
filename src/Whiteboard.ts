@@ -21,6 +21,9 @@ export function createWhiteboard(
   )}`;
   iframe.width = "100%";
   iframe.height = "100%";
+  iframe.style.border = "none";
+  iframe.style.margin = "0";
+  iframe.style.padding = "0";
 
   const whiteboard = {
     updateUserToken: (userToken: string) => {
