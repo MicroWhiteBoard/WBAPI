@@ -19,6 +19,8 @@ export function createWhiteboard(
   iframe.src = `${parameters.baseUrl}/boards/${encodeURIComponent(
     parameters.boardId
   )}`;
+  iframe.width = "100%";
+  iframe.height = "100%";
 
   const whiteboard = {
     updateUserToken: (userToken: string) => {
