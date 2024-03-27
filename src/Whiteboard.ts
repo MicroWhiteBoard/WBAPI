@@ -25,29 +25,35 @@ export function createWhiteboard(
   iframe.style.margin = "0";
   iframe.style.padding = "0";
 
-  const whiteboard = {
-    updateUserToken: (userToken: string) => {
-      iframe.contentWindow?.postMessage(
-        {
-          type: "updateUserToken",
-          userToken: userToken,
-        },
-        "*"
-      );
-    },
-    dispose: () => {
-      if (iframe) {
-        parameters.container.removeChild(iframe);
-      }
-    },
-  };
-
   parameters.container.appendChild(iframe);
 
   return new Promise<Whiteboard>((resolve, reject) => {
     function loadHandler() {
-      setupKeyboardEventTunnel(parameters.container, iframe);
+      const cleanupKeyboardEventTunnel = setupKeyboardEventTunnel(
+        parameters.container,
+        iframe
+      );
+
       iframe.removeEventListener("load", loadHandler);
+
+      const whiteboard = {
+        updateUserToken: (userToken: string) => {
+          iframe.contentWindow?.postMessage(
+            {
+              type: "updateUserToken",
+              userToken: userToken,
+            },
+            "*"
+          );
+        },
+        dispose: () => {
+          if (iframe) {
+            parameters.container.removeChild(iframe);
+          }
+          cleanupKeyboardEventTunnel();
+        },
+      };
+
       resolve(whiteboard);
     }
 
@@ -64,15 +70,12 @@ export class WhiteboardLoader {
 function setupKeyboardEventTunnel(
   container: HTMLElement,
   iframe: HTMLIFrameElement
-): void {
+): () => void {
   function keyboardEventHandler(event: KeyboardEvent) {
     iframe.contentWindow?.postMessage(serializeKeyboardEvent(event), "*");
   }
 
-  document.addEventListener("keydown", keyboardEventHandler);
-  document.addEventListener("keyup", keyboardEventHandler);
-
-  window.addEventListener("message", (event: MessageEvent) => {
+  function messageHandler(event: MessageEvent) {
     if (
       event.source === iframe.contentWindow &&
       event.data?.type === "keyboardEvent"
@@ -83,7 +86,18 @@ function setupKeyboardEventTunnel(
       );
       container.dispatchEvent(keyboardEvent);
     }
-  });
+  }
+
+  document.addEventListener("keydown", keyboardEventHandler);
+  document.addEventListener("keyup", keyboardEventHandler);
+
+  window.addEventListener("message", messageHandler);
+
+  return function (): void {
+    document.removeEventListener("keydown", keyboardEventHandler);
+    document.removeEventListener("keyup", keyboardEventHandler);
+    window.removeEventListener("message", messageHandler);
+  };
 }
 
 function serializeKeyboardEvent(event: KeyboardEvent) {
